@@ -540,3 +540,34 @@ mflibs::shell::icon::cross::white() {
   declare -g shell_color shell_icon=cross; shell_color=$(tput setaf 7)
   mflibs::shell::output "$@"
 }
+
+################################################################################
+# @description: prompt for yes or no
+# @example:
+#   mflibs::shell::prompt::yn "hi"
+# @arg $1: string
+################################################################################
+mflibs::shell::prompt::yn() {
+  declare prompt default reply
+  if [[ "${2:-}" = "Y" ]]; then
+    prompt="Y/n"
+    default=Y
+  elif [[ "${2:-}" = "N" ]]; then
+    prompt="y/N"
+    default=N
+  else
+    prompt="y/n"
+    default=
+  fi
+  while true; do
+    printf "%s [%s] " "$1" "$prompt"
+    read -r reply < /dev/tty
+    if [[ -z "$reply" ]]; then
+      reply=$default
+    fi
+    case "$reply" in
+      Y* | y*) return 0 ;;
+      N* | n*) return 1 ;;
+    esac
+  done
+}

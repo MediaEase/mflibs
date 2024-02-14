@@ -46,3 +46,10 @@ mflibs::file::extract() {
   [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && echo -ne "\033[38;5;203m[1]\e[0m: unable to extract\n" >&2
   return 1
 }
+file::load::yaml::key() {
+  local file="$1"
+  local key="$2"
+  local value
+  value=$(yq r "$file" "$key")
+  echo "$value"
+}

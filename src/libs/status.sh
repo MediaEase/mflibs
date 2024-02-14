@@ -23,7 +23,7 @@ mflibs::status::error() {
   declare message=${1:-"an unspecified error occurred"}
   declare mf_error=${2:-1}
   message=${message//$HOME/\~}
-  echo -ne "\033[38;5;203merror\e[0m[$mf_error]: $message\n" >&2
+  echo -ne "\033[38;5;203m[ERROR]\e[0m[$mf_error] - $message\n" >&2
 }
 
 ################################################################################
@@ -34,7 +34,7 @@ mflibs::status::error() {
 #   mflibs::status::kill "error_message" 1
 ################################################################################
 mflibs::status::kill() {
-  mflibs::error "$1" "$2"; exit "${2:-1}"
+  mflibs::status::error "$1" "$2"; exit "${2:-1}"
 }
 
 ################################################################################
@@ -47,7 +47,7 @@ mflibs::status::warn() {
   declare message=${1:-"an unspecified error occurred"}
   declare mf_error=${2:-1}
   message=${message//$HOME/\~}
-  echo -ne "\033[38;5;220mwarn\e[0m[$mf_error]: $message\n" >&2
+  echo -ne "\033[38;5;220m[WARN]\e[0m[$mf_error] -  $message\n" >&2
 }
 
 ################################################################################
@@ -59,7 +59,7 @@ mflibs::status::warn() {
 mflibs::status::success() {
   declare message=${1:-"command completed successfully"}
   message=${message//$HOME/\~}
-  echo -ne "\033[38;5;34msuccess\e[0m: $message\n"
+  echo -ne "\033[38;5;34m[SUCCESS]\e[0m - $message\n"
 }
 
 ################################################################################
@@ -71,5 +71,5 @@ mflibs::status::success() {
 mflibs::status::info() {
   declare message=${1:-"information not specified"}
   message=${message//$HOME/\~}
-  echo -ne "\033[38;5;44minfo\e[0m: $message\n"
+  echo -ne "\033[38;5;44m[INFO]\e[0m - $message\n"
 }

@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck source=/dev/null
 ################################################################################
 # @file_name: distro
 # @version: 1.1.49
