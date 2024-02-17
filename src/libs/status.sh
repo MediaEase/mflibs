@@ -23,7 +23,15 @@ mflibs::status::error() {
   declare message=${1:-"an unspecified error occurred"}
   declare mf_error=${2:-1}
   message=${message//$HOME/\~}
-  echo -ne "\033[38;5;203m[ERROR]\e[0m[$mf_error] - $message\n" >&2
+  # if verbose is set, print the stack trace
+  if [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]]; then
+    echo -ne "\033[38;5;203m[ERROR]\e[0m[$mf_error] - $message\n" >&2
+    echo -ne "\033[38;5;203m[ERROR]\e[0m[$mf_error] - stack trace:\n" >&2
+    local i=0
+    while caller $i; do ((i++)); done
+  else
+    echo -ne "$message\n" >&2
+  fi
 }
 
 ################################################################################
@@ -47,7 +55,11 @@ mflibs::status::warn() {
   declare message=${1:-"an unspecified error occurred"}
   declare mf_error=${2:-1}
   message=${message//$HOME/\~}
-  echo -ne "\033[38;5;220m[WARN]\e[0m[$mf_error] -  $message\n" >&2
+  if [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]]; then
+    echo -ne "\033[38;5;208m[WARN]\e[0m[$mf_error] - $message\n" >&2
+  else
+    echo -ne "$message\n" >&2
+  fi
 }
 
 ################################################################################
@@ -59,7 +71,11 @@ mflibs::status::warn() {
 mflibs::status::success() {
   declare message=${1:-"command completed successfully"}
   message=${message//$HOME/\~}
-  echo -ne "\033[38;5;34m[SUCCESS]\e[0m - $message\n"
+  if [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]]; then
+    echo -ne "\033[38;5;34m[SUCCESS]\e[0m - $message\n"
+  else 
+    echo -ne "$message\n"
+  fi
 }
 
 ################################################################################
@@ -71,5 +87,9 @@ mflibs::status::success() {
 mflibs::status::info() {
   declare message=${1:-"information not specified"}
   message=${message//$HOME/\~}
-  echo -ne "\033[38;5;44m[INFO]\e[0m - $message\n"
+  if [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]]; then
+    echo -ne "\033[38;5;44m[INFO]\e[0m - $message\n"
+  else 
+    echo -ne "$message\n"
+  fi
 }

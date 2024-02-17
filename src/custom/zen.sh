@@ -26,7 +26,7 @@ zen::environment::init() {
     mflibs_base_location="${mflibs_base_location%/*}"
     mflibs_lib_location="${mflibs_base_location}/libs"
     # mflibs_custom_location="${mflibs_base_location}/custom"
-    mediaease_base_location="/opt/MediaEase"
+    mediaease_base_location="/opt/MediaEase/MediaEase"
 }
 
 ################################################################################
