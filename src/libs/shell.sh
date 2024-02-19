@@ -571,3 +571,34 @@ mflibs::shell::prompt::yn() {
     esac
   done
 }
+
+###############################################################################
+# @description: prompt for a code input
+# @example:
+#   mflibs::shell::prompt::code "prompt" "code"
+# @arg $1: string
+# @arg $2: string
+# @arg $3: string
+###############################################################################
+mflibs::shell::prompt::code() {
+  local prompt="${1:-}"
+  local string="${2:-}"
+  local context="${3:-code}"
+
+  while true; do
+    printf "%s " "$prompt"
+    
+    if [[ "$context" == "code" ]]; then
+      mflibs::shell::text::red::sl "$string"
+    elif [[ "$context" == "password" ]]; then
+      zen::vault::pass::decode "$string"
+    fi
+    mflibs::shell::text::cyan " ➜ "
+    read -r reply < /dev/tty
+    if [[ "$reply" == "$string" ]]; then
+      return 0
+    else
+      mflibs::shell::text::red "Incorrect number: $reply. Please try again."
+    fi
+  done
+}
