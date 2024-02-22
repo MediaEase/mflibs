@@ -46,7 +46,16 @@ mflibs::file::extract() {
   [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && echo -ne "\033[38;5;203m[1]\e[0m: unable to extract\n" >&2
   return 1
 }
-file::load::yaml::key() {
+
+################################################################################
+# @description: loads a yaml file and returns a value based on a key
+# @example:
+#   mflibs::file::load::yaml::key file.yaml key
+# @arg $1: file to load
+# @arg $2: key to extract
+# @stdout: value of key
+################################################################################
+mflibs::file::load::yaml::key() {
   local file="$1"
   local key="$2"
   local value
