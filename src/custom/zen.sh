@@ -39,6 +39,7 @@ zen::environment::init() {
 zen::import() {
     local loaded_libraries=()
     local failed_libraries=()
+    echo "Importing libraries..."
     [[ $* =~ "verbose" ]] && declare -xga MFLIBS_LOADED+=("verbose") && echo -ne "\033[38;5;44m[INFO]\e[0m - verbosity enabled\n"
     
     for l in ${@//,/ }; do
@@ -61,10 +62,10 @@ zen::import() {
         echo -ne "\033[38;5;34m[SUCCESS]\e[0m - loaded libraries: ${loaded_libraries[*]}\n"
     fi
     if [[ ${#failed_libraries[@]} -gt 0 ]]; then
-        echo -ne "\033[38;5;220m[WARN]\e[0m - libraries not loaded: ${failed_libraries[*]}\n" >&2
+        echo -ne "\033[38;5;220m[WARN]\e[0m - libraries not loaded: ${failed_libraries[*]}\n" 
     fi
-    if [[ " ${loaded_libraries[*]} " =~ log ]]; then
-        [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && echo -ne "\033[38;5;44m[INFO]\e[0m - logging to ${MFLIBS_LOG_LOCATION}\n"
+    if [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && [[ " ${loaded_libraries[*]} " =~ log ]]; then
+        echo -ne "\033[38;5;44m[INFO]\e[0m - logging to ${MFLIBS_LOG_LOCATION}\n"
     fi
 }
 
