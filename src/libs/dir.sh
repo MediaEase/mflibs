@@ -25,7 +25,7 @@
 ################################################################################
 mflibs::dir::mkcd() {
   if [[ $# = 0 ]]; then
-    [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && echo -ne "\033[38;5;203m[3]\e[0m: ${FUNCNAME[0]} is missing arguments\n" >&2
+    [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && echo -ne "$(tput setaf 1)[3]$(tput sgr0): ${FUNCNAME[0]} is missing arguments\n" >&2
     return 3
   fi
   declare directory="${1}"

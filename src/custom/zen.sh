@@ -40,7 +40,7 @@ zen::import() {
     local loaded_libraries=()
     local failed_libraries=()
     echo "Importing libraries..."
-    [[ $* =~ "verbose" ]] && declare -xga MFLIBS_LOADED+=("verbose") && echo -ne "\033[38;5;44m[INFO]\e[0m - verbosity enabled\n"
+    [[ $* =~ "verbose" ]] && declare -xga MFLIBS_LOADED+=("verbose") && echo -ne "$(tput setaf 6)[INFO]$(tput sgr0) - verbosity enabled\n"
     
     for l in ${@//,/ }; do
         [[ $l == "verbose" ]] && continue
@@ -59,13 +59,13 @@ zen::import() {
         fi
     done
     if [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && [[ ${#loaded_libraries[@]} -gt 0 ]]; then
-        echo -ne "\033[38;5;34m[SUCCESS]\e[0m - loaded libraries: ${loaded_libraries[*]}\n"
+        echo -ne "$(tput setaf 2)[SUCCESS]$(tput sgr0) - loaded libraries: ${loaded_libraries[*]}\n"
     fi
     if [[ ${#failed_libraries[@]} -gt 0 ]]; then
-        echo -ne "\033[38;5;220m[WARN]\e[0m - libraries not loaded: ${failed_libraries[*]}\n" 
+        echo -ne "$(tput setaf 3)[WARN]$(tput sgr0) - libraries not loaded: ${failed_libraries[*]}\n" 
     fi
     if [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && [[ " ${loaded_libraries[*]} " =~ log ]]; then
-        echo -ne "\033[38;5;44m[INFO]\e[0m - logging to ${MFLIBS_LOG_LOCATION}\n"
+        echo -ne "$(tput setaf 6)[INFO]$(tput sgr0) - logging to ${MFLIBS_LOG_LOCATION}\n"
     fi
 }
 

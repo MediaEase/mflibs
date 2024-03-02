@@ -26,18 +26,18 @@
 ################################################################################
 mflibs::array::contains() {
   if [[ $# -lt 2 ]]; then
-    [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && echo -ne "\033[38;5;203m[2]\e[0m: ${FUNCNAME[0]} is missing arguments\n" >&2
+    [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && echo -ne "$(tput setaf 1)[2]$(tput sgr0): ${FUNCNAME[0]} is missing arguments\n" >&2
     return 2
   fi
   declare mflibs_test="${1:-}"
   shift
   for i in "${@}"; do
     if [[ "${i}" == "${mflibs_test}" ]]; then
-      [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && echo -ne "\033[38;5;34m[0]\e[0m: array contains $mflibs_test\n"
+      [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && echo -ne "$(tput setaf 2)[0]$(tput sgr0): array contains $mflibs_test\n"
       return 0
     fi
   done
-  [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && echo -ne "\033[38;5;220m[1]\e[0m: array does not contain $mflibs_test\n"
+  [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && echo -ne "$(tput setaf 3)[1]$(tput sgr0): array does not contain $mflibs_test\n"
   return 1
 }
 
@@ -53,10 +53,10 @@ mflibs::array::contains() {
 mflibs::array::is_empty() {
   declare -a array=("$@")
   if [[ "${#array[@]}" -eq 0 ]]; then
-    [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && echo -ne "\033[38;5;34m[0]\e[0m: array is empty\n"
+    [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && echo -ne "$(tput setaf 2)[0]$(tput sgr0): array is empty\n"
     return 0
   fi
-  [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && echo -ne "\033[38;5;220m[2]\e[0m: array is not empty\n"
+  [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && echo -ne "$(tput setaf 3)[2]$(tput sgr0): array is not empty\n"
   return 2
 }
 
@@ -72,7 +72,7 @@ mflibs::array::is_empty() {
 ################################################################################
 mflibs::array::glue() {
   if [[ $# -lt 2 ]]; then
-    [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && echo -ne "\033[38;5;203m[2]\e[0m: ${FUNCNAME[0]} is missing arguments\n" >&2
+    [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && echo -ne "$(tput setaf 1)[2]$(tput sgr0): ${FUNCNAME[0]} is missing arguments\n" >&2
     return 2
   fi
   declare delimiter="${1}"; shift
@@ -95,7 +95,7 @@ mflibs::array::glue() {
 ################################################################################
 mflibs::array::merge() {
   if [[ $# -lt 2 ]]; then
-    [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && echo -ne "\033[38;5;203m[2]\e[0m: ${FUNCNAME[0]} is missing arguments\n" >&2
+    [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && echo -ne "$(tput setaf 1)[2]$(tput sgr0): ${FUNCNAME[0]} is missing arguments\n" >&2
     return 2
   fi
   declare -a array1=("${!1}") array2=("${!2}")

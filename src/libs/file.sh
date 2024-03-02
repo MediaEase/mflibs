@@ -25,11 +25,11 @@
 ################################################################################
 mflibs::file::extract() {
   if [[ $# -ne 1 ]]; then
-    [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && echo -ne "\033[38;5;203m[2]\e[0m: ${FUNCNAME[0]} is missing arguments\n" >&2
+    [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && echo -ne "$(tput setaf 1)[2]$(tput sgr0): ${FUNCNAME[0]} is missing arguments\n" >&2
     return 2
   fi
   if [[ ! -f "$1" ]]; then
-    [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && echo -ne "\033[38;5;203m[3]\e[0m: $1 does not exist" >&2
+    [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && echo -ne "$(tput setaf 1)[3]$(tput sgr0): $1 does not exist" >&2
     return 3
   fi
   case $1 in
@@ -43,7 +43,7 @@ mflibs::file::extract() {
     *.zip) unzip -q "$1" && return 0;;
     *.7z) 7z x "$1" && return 0;;
   esac
-  [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && echo -ne "\033[38;5;203m[1]\e[0m: unable to extract\n" >&2
+  [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && echo -ne "$(tput setaf 1)[1]$(tput sgr0): unable to extract\n" >&2
   return 1
 }
 
