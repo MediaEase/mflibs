@@ -37,7 +37,7 @@ mflibs::environment::init() {
 mflibs::import() {
     local loaded_libraries=()
     local failed_libraries=()
-    [[ $* =~ "verbose" ]] && declare -xga MFLIBS_LOADED+=("verbose") && echo -ne "$(tput setaf 6)[INFO]$(tput sgr0) - verbosity enabled\n"
+    [[ $* =~ "verbose" ]] && declare -xga MFLIBS_LOADED+=("verbose") && echo -ne "$(tput sgr0)[$(tput setaf 6)INFO$(tput sgr0)] - verbosity enabled\n"
     
     for l in ${@//,/ }; do
         [[ $l == "verbose" ]] && continue
@@ -56,13 +56,13 @@ mflibs::import() {
         fi
     done
     if [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && [[ ${#loaded_libraries[@]} -gt 0 ]]; then
-        echo -ne "$(tput setaf 2)[SUCCESS]$(tput sgr0) - loaded libraries: ${loaded_libraries[*]}\n"
+        echo -ne "$(tput sgr0)[$(tput setaf 2)SUCCESS$(tput sgr0)] - loaded libraries: ${loaded_libraries[*]}\n"
     fi
     if [[ ${#failed_libraries[@]} -gt 0 ]]; then
-        echo -ne "$(tput setaf 3)[WARN]$(tput sgr0) - libraries not loaded: ${failed_libraries[*]}\n" >&2
+        echo -ne "$(tput sgr0)[$(tput setaf 3)WARN$(tput sgr0)] - libraries not loaded: ${failed_libraries[*]}\n" >&2
     fi
     if [[ " ${loaded_libraries[*]} " =~ log ]]; then
-        [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && echo -ne "$(tput setaf 6)[INFO]$(tput sgr0) - logging to ${MFLIBS_LOG_LOCATION}\n"
+        [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && echo -ne "$(tput sgr0)[$(tput setaf 6)INFO$(tput sgr0)] - logging to ${MFLIBS_LOG_LOCATION}\n"
     fi
 }
 

@@ -25,8 +25,8 @@ mflibs::status::error() {
   message=${message//$HOME/\~}
   # if verbose is set, print the stack trace
   if [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]]; then
-    echo -ne "$(tput setaf 1)[ERROR]$(tput sgr0)[$mf_error] - $message\n" >&2
-    echo -ne "$(tput setaf 1)[ERROR]$(tput sgr0)[$mf_error] - stack trace:\n" >&2
+    echo -ne "[$(tput setaf 1)ERROR$(tput sgr0)][$mf_error] - $message\n" >&2
+    echo -ne "[$(tput setaf 1)ERROR$(tput sgr0)][$mf_error] - stack trace:\n" >&2
     local i=0
     while caller $i; do ((i++)); done
   else
@@ -56,7 +56,7 @@ mflibs::status::warn() {
   declare mf_error=${2:-1}
   message=${message//$HOME/\~}
   if [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]]; then
-    echo -ne "$(tput setaf 3)[WARN]$(tput sgr0)[$mf_error] - $message\n" >&2
+    echo -ne "$(tput sgr0)[$(tput setaf 3)WARN$(tput sgr0)][$mf_error] - $message\n" >&2
   else
     echo -ne "$(tput setaf 3)$message\n" >&2
   fi
@@ -72,7 +72,7 @@ mflibs::status::success() {
   declare message=${1:-"command completed successfully"}
   message=${message//$HOME/\~}
   if [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]]; then
-    echo -ne "$(tput setaf 2)[SUCCESS]$(tput sgr0) - $message\n"
+    echo -ne "$(tput sgr0)[$(tput setaf 2)SUCCESS$(tput sgr0)] - $message\n"
   else 
     echo -ne "$(tput setaf 2)$message\n"
   fi
@@ -88,7 +88,7 @@ mflibs::status::info() {
   declare message=${1:-"information not specified"}
   message=${message//$HOME/\~}
   if [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]]; then
-    echo -ne "$(tput setaf 6)[INFO]$(tput sgr0) - $message\n"
+    echo -ne "$(tput sgr0)[$(tput setaf 6)INFO$(tput sgr0)] - $message\n"
   else 
     echo -ne "$(tput setaf 6)$message\n"
   fi

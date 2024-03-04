@@ -33,7 +33,7 @@ mflibs::distro::codename() {
     source /etc/lsb-release
     distro_codename="${DISTRIB_CODENAME}"
   else
-    [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && echo -ne "$(tput setaf 1)[1]$(tput sgr0): unable to detect code name\n" >&2
+    [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && echo -ne "[$(tput setaf 1)1$(tput sgr0)]: unable to detect code name\n" >&2
     return 1
   fi
   printf -- "%s" "${distro_codename}"
@@ -59,7 +59,7 @@ mflibs::distro::version() {
       source /etc/lsb-release
       distro_version="${DISTRIB_RELEASE}"
     else
-    [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && echo -ne "$(tput setaf 1)[1]$(tput sgr0): unable to detect distro version\n" >&2
+    [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && echo -ne "[$(tput setaf 1)1$(tput sgr0)]: unable to detect distro version\n" >&2
       return 1
     fi
     printf -- "%s" "${distro_version}"
