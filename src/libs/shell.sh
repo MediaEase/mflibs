@@ -50,6 +50,8 @@ mflibs::shell::output() {
     warning) shell_icon="⚠ ${shell_reset}";;
     check) shell_icon="✓ ${shell_reset}";;
     cross) shell_icon="✗ ${shell_reset}";;
+    chevron) shell_icon="❯ ${shell_reset}";;
+    ask) shell_icon="❔ ${shell_reset}";;
   esac
   if [[ ${mflibs_echo:-} -eq 1 ]]; then
     printf -- "%s${shell_newline}" "$@"
@@ -538,6 +540,92 @@ mflibs::shell::icon::cross::cyan() {
 }
 mflibs::shell::icon::cross::white() {
   declare -g shell_color shell_icon=cross; shell_color=$(tput setaf 7)
+  mflibs::shell::output "$@"
+}
+
+################################################################################
+# @description: chevron shell outputs
+# @example:
+#   mflibs::shell::icon::chevron "hi"
+# @arg $1: string
+################################################################################
+mflibs::shell::icon::chevron() {
+  declare -g shell_icon=chevron
+  mflibs::shell::output "$@"
+}
+mflibs::shell::icon::chevron::black() {
+  declare -g shell_color shell_icon=chevron; shell_color=$(tput setaf 0)
+  mflibs::shell::output "$@"
+}
+mflibs::shell::icon::chevron::red() {
+  declare -g shell_color shell_icon=chevron; shell_color=$(tput setaf 1)
+  mflibs::shell::output "$@"
+}
+mflibs::shell::icon::chevron::green() {
+  declare -g shell_color shell_icon=chevron; shell_color=$(tput setaf 2)
+  mflibs::shell::output "$@"
+}
+mflibs::shell::icon::chevron::yellow() {
+  declare -g shell_color shell_icon=chevron; shell_color=$(tput setaf 3)
+  mflibs::shell::output "$@"
+}
+mflibs::shell::icon::chevron::blue() {
+  declare -g shell_color shell_icon=chevron; shell_color=$(tput setaf 4)
+  mflibs::shell::output "$@"
+}
+mflibs::shell::icon::chevron::magenta() {
+  declare -g shell_color shell_icon=chevron; shell_color=$(tput setaf 5)
+  mflibs::shell::output "$@"
+}
+mflibs::shell::icon::chevron::cyan() {
+  declare -g shell_color shell_icon=chevron; shell_color=$(tput setaf 6)
+  mflibs::shell::output "$@"
+}
+mflibs::shell::icon::chevron::white() {
+  declare -g shell_color shell_icon=chevron; shell_color=$(tput setaf 7)
+  mflibs::shell::output "$@"
+}
+
+################################################################################
+# @description: ask shell outputs
+# @example:
+#   mflibs::shell::icon::ask "hi"
+# @arg $1: string
+################################################################################
+mflibs::shell::icon::ask() {
+  declare -g shell_icon=ask
+  mflibs::shell::output "$@"
+}
+mflibs::shell::icon::ask::black() {
+  declare -g shell_color shell_icon=ask; shell_color=$(tput setaf 0)
+  mflibs::shell::output "$@"
+}
+mflibs::shell::icon::ask::red() {
+  declare -g shell_color shell_icon=ask; shell_color=$(tput setaf 1)
+  mflibs::shell::output "$@"
+}
+mflibs::shell::icon::ask::green() {
+  declare -g shell_color shell_icon=ask; shell_color=$(tput setaf 2)
+  mflibs::shell::output "$@"
+}
+mflibs::shell::icon::ask::yellow() {
+  declare -g shell_color shell_icon=ask; shell_color=$(tput setaf 3)
+  mflibs::shell::output "$@"
+}
+mflibs::shell::icon::ask::blue() {
+  declare -g shell_color shell_icon=ask; shell_color=$(tput setaf 4)
+  mflibs::shell::output "$@"
+}
+mflibs::shell::icon::ask::magenta() {
+  declare -g shell_color shell_icon=ask; shell_color=$(tput setaf 5)
+  mflibs::shell::output "$@"
+}
+mflibs::shell::icon::ask::cyan() {
+  declare -g shell_color shell_icon=ask; shell_color=$(tput setaf 6)
+  mflibs::shell::output "$@"
+}
+mflibs::shell::icon::ask::white() {
+  declare -g shell_color shell_icon=ask; shell_color=$(tput setaf 7)
   mflibs::shell::output "$@"
 }
 
