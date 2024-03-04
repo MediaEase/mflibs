@@ -93,3 +93,19 @@ mflibs::status::info() {
     echo -ne "$(tput setaf 6)$message\n"
   fi
 }
+
+################################################################################
+# @description: outputs header to term
+# @arg $1: header message
+# @example:
+#   mflibs::status::header "header_message"
+################################################################################
+mflibs::status::header() {
+  declare message=${1:-"header not specified"}
+  message=${message//$HOME/\~}
+  if [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]]; then
+    echo -ne "$(tput sgr0)[$(tput setaf 7)HEADER$(tput sgr0)] - $message\n"
+  else 
+    echo -ne "$(tput setaf 7)$message\n"
+  fi
+}
