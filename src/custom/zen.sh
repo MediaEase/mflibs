@@ -39,7 +39,6 @@ zen::environment::init() {
 zen::import() {
     local loaded_libraries=()
     local failed_libraries=()
-    echo "Importing libraries..."
     [[ $* =~ "verbose" ]] && declare -xga MFLIBS_LOADED+=("verbose") && echo -ne "$(tput sgr0)[$(tput setaf 6)INFO$(tput sgr0)] - verbosity enabled\n"
     
     for l in ${@//,/ }; do

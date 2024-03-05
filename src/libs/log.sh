@@ -19,19 +19,19 @@
 # @internal
 ################################################################################
 mflibs::log::init() {
-  declare mflibs_log_base;mflibs_log_base="$(dirname "$(realpath -s "${BASH_SOURCE[0]%/*}")")"; 
-  [[ -z "${mflibs_log_location}" ]] && declare -g mflibs_log_location="${mflibs_log_base}/logs/${BASH_SOURCE[-1]##*/}"
-  if [[ ! -d "$(dirname "${mflibs_log_location}")" ]]; then
-    [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && echo -ne "$(tput sgr0)[$(tput setaf 6)INFO$(tput sgr0)] - creating log location: $(dirname "${mflibs_log_location}")\n"
-    mkdir -p "$(dirname "${mflibs_log_location}")"
+  declare mflibs_log_base;mflibs_log_base="/opt/MediaEase/logs"; 
+  [[ -z "${mflibs_log_file}" ]] && declare -g mflibs_log_file="${mflibs_log_base}/${BASH_SOURCE[-1]##*/}"
+  if [[ ! -d "$(dirname "${mflibs_log_file}")" ]]; then
+    [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && echo -ne "$(tput sgr0)[$(tput setaf 6)INFO$(tput sgr0)] - creating log location: $(dirname "${mflibs_log_file}")\n"
+    mkdir -p "$(dirname "${mflibs_log_file}")"
   fi
-  if [[ -f "${mflibs_log_location}" && $(wc -c "${mflibs_log_location}" | awk '{print $1}') -gt 10000 ]]; then
-    [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && echo -ne "$(tput sgr0)[$(tput setaf 6)INFO$(tput sgr0)] - rotating ${mflibs_log_location} to ${mflibs_log_location}.1\n"
-    mv -f "${mflibs_log_location}" "${mflibs_log_location}.1"
+  if [[ -f "${mflibs_log_file}" && $(wc -c "${mflibs_log_file}" | awk '{print $1}') -gt 10000 ]]; then
+    [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && echo -ne "$(tput sgr0)[$(tput setaf 6)INFO$(tput sgr0)] - rotating ${mflibs_log_file} to ${mflibs_log_file}.1\n"
+    mv -f "${mflibs_log_file}" "${mflibs_log_file}.1"
   fi
-  touch "${mflibs_log_location}" || { echo -ne "[$(tput setaf 1)ERROR$(tput sgr0)][1] - unable to touch ${mflibs_log_location}\n" && exit 1; }
-  printf "\n### %s ###\n" "$(date "+%Y-%m-%d %R:%S")" >> "${mflibs_log_location}"
-  export MFLIBS_LOG_LOCATION="${mflibs_log_location}"
+  touch "${mflibs_log_file}" || { echo -ne "[$(tput setaf 1)ERROR$(tput sgr0)][1] - unable to touch ${mflibs_log_file}\n" && exit 1; }
+  printf "\n### %s ###\n" "$(date "+%Y-%m-%d %R:%S")" >> "${mflibs_log_file}"
+  export MFLIBS_LOG_LOCATION="${mflibs_log_file}"
 }
 
 ################################################################################
@@ -42,9 +42,9 @@ mflibs::log::init() {
 ################################################################################
 mflibs::log() {
   if [[ ! " ${MFLIBS_LOADED[*]} " =~ verbose ]]; then
-    ($1 >> "${mflibs_log_location}" 2>&1)
+    ($1 >> "${mflibs_log_file}" 2>&1)
   else
-    $1 |& tee -a "${mflibs_log_location}"
+    $1 |& tee -a "${mflibs_log_file}"
   fi
 }
 
