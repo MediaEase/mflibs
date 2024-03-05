@@ -50,7 +50,7 @@ mflibs::shell::output() {
     warning) shell_icon="⚠ ${shell_reset}";;
     check) shell_icon="✓ ${shell_reset}";;
     cross) shell_icon="✗ ${shell_reset}";;
-    chevron) shell_icon="❯ ${shell_reset}";;
+    chevron) shell_icon="   > ${shell_reset}";;
     ask) shell_icon="❔ ${shell_reset}";;
   esac
   if [[ ${mflibs_echo:-} -eq 1 ]]; then
