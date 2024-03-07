@@ -632,10 +632,10 @@ mflibs::shell::icon::ask::white() {
 ################################################################################
 # @description: prompt for yes or no
 # @example:
-#   mflibs::shell::prompt::yn "hi"
+#   mflibs::shell::prompt "hi"
 # @arg $1: string
 ################################################################################
-mflibs::shell::prompt::yn() {
+mflibs::shell::prompt() {
   declare prompt default reply
   declare -a choice_list
   declare num_choices=$3
