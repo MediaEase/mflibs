@@ -637,25 +637,50 @@ mflibs::shell::icon::ask::white() {
 ################################################################################
 mflibs::shell::prompt::yn() {
   declare prompt default reply
+  declare -a choice_list
+  declare num_choices=$3
+  declare -n ref_choice_list=$4
+  declare -n output_var=$5  
   if [[ "${2:-}" = "Y" ]]; then
-    prompt="Y/n"
+    prompt=$(mflibs::shell::text::green::sl "[Y]";mflibs::shell::text::white::sl " $(zen::i18n::translate "common.or" | tr '[:upper:]' '[:lower:]') ";mflibs::shell::text::red::sl "[N] ";mflibs::shell::text::white::sl "[C] (default : ";mflibs::shell::text::green::sl "Y";mflibs::shell::text::white::sl " ):")
     default=Y
   elif [[ "${2:-}" = "N" ]]; then
-    prompt="y/N"
+    prompt=$(mflibs::shell::text::green::sl "[Y]";mflibs::shell::text::white::sl " $(zen::i18n::translate "common.or" | tr '[:upper:]' '[:lower:]') ";mflibs::shell::text::red::sl "[N] ";mflibs::shell::text::white::sl "[C] (default : ";mflibs::shell::text::red::sl "N";mflibs::shell::text::white::sl " ):")
     default=N
+  elif [[ "${2:-}" = "C" ]]; then
+    prompt="$(mflibs::shell::text::cyan "$(zen::i18n::translate "common.choices")")"
+    default=C
+    choice_list=("${ref_choice_list[@]}")
   else
-    prompt="y/n"
+    prompt="y/n/c"
     default=
   fi
   while true; do
-    printf "%s [%s] " "$1" "$prompt"
+    printf "%s %s %s" "$1" "$(mflibs::shell::text::cyan " ➜ ")" "$prompt"
     read -r reply < /dev/tty
     if [[ -z "$reply" ]]; then
       reply=$default
     fi
+
     case "$reply" in
       Y* | y*) return 0 ;;
       N* | n*) return 1 ;;
+      C* | c*)
+        if [[ $num_choices -gt 0 ]]; then
+          mflibs::shell::text::cyan "$(zen::i18n::translate "common.choices")"
+          mflibs::shell::text::cyan " ➜ "
+          select choice in "${choice_list[@]}"; do
+            mflibs::shell::text::cyan "$(zen::i18n::translate "common.chosen" "$choice")"
+            output_var=$choice
+            export output_var
+            break
+          done
+          return 2
+        else
+          mflibs::shell::text::red "$(zen::i18n::translate "common.no_choices_available" "$reply")"
+          return 1
+        fi
+        ;;
     esac
   done
 }
@@ -686,7 +711,7 @@ mflibs::shell::prompt::code() {
     if [[ "$reply" == "$string" ]]; then
       return 0
     else
-      mflibs::shell::text::red "Incorrect number: $reply. Please try again."
+      mflibs::shell::text::red "$(zen::i18n::translate "common.invalid_input" "$reply")"
     fi
   done
 }
