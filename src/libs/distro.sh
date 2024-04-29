@@ -64,3 +64,46 @@ mflibs::distro::version() {
     fi
     printf -- "%s" "${distro_version}"
 }
+
+################################################################################
+# @description: identify linux distro
+# @noargs
+# @example:
+#   mflibs::distro::name
+# @return_code: 0 success
+# @return_code: 1 unable to detect
+################################################################################
+mflibs::distro::report() {
+  declare -g os_name os_version packagetype
+  if [[ -f /etc/os-release ]]; then
+    source "/etc/os-release"
+    os_name="${ID}"
+    os_version="${VERSION_ID}"
+    packagetype="Unknown"
+
+    case "${ID}" in
+      ubuntu|debian|raspbian)
+        packagetype="apt"
+        ;;
+      centos|rhel|fedora|amzn)
+        packagetype="dnf"
+        [[ "${VERSION_ID%%.*}" = "7" ]] && packagetype="yum"
+        ;;
+      arch|manjaro)
+        packagetype="pacman"
+        ;;
+      opensuse*|sles)
+        packagetype="zypper"
+        ;;
+      alpine)
+        packagetype="apk"
+        ;;
+      *)
+        packagetype="Not supported"
+        ;;
+    esac
+  else
+    echo "Unable to identify system information."
+    return 1
+  fi
+}
