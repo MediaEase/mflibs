@@ -118,3 +118,36 @@ mflibs::distro::report() {
       return 3
     fi
 }
+
+################################################################################
+# @description: Checks if the OS is Ubuntu 22+ or Debian 12+ with apt package management
+# @noargs
+# @return_code: 0 if supported
+# @return_code: 1 if unsupported
+# @return_code: 2 if neither curl nor wget is available
+# @return_code: 3 if unsupported OS version
+################################################################################
+mflibs::distro::check() {
+  mflibs::distro::report
+  if [[ "${packagetype}" != "apt" ]]; then
+    printf -- "Unsupported package manager: %s on %s %s\n" "${packagetype}" "${os_name}" "${os_version}"
+    return 1
+  fi
+  if [[ "${os_name}" = "ubuntu" && "${os_version}" -ge 22 ]] || [[ "${os_name}" = "debian" && "${os_version}" -ge 12 ]]; then
+    if mflibs::verify::command "curl"; then
+      CURL="curl -fsSL"
+      STAND_CURL="curl"
+    elif mflibs::verify::command "wget"; then
+      CURL="wget -qO- --content-on-error"
+      STAND_CURL="wget"
+    else
+      printf -- "Neither curl nor wget is available, which are required for downloading.\n"
+      return 2
+    fi
+    export STAND_CURL CURL
+    return 0
+  else
+    printf -- "Unsupported OS version: %s %s (Requires Ubuntu 22+ or Debian 12+)\n" "${os_name}" "${os_version}"
+    return 3
+  fi
+}
