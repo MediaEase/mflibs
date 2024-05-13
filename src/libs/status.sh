@@ -5,11 +5,11 @@
 # @project_name: mflibs
 # @brief: a library for status handling
 #
-# @author: Jamie Dobbs (mschf)
-# @author_contact: jamie.dobbs@mschf.dev
+# @author: Jamie Dobbs (mschf), Thomas Chauveau (tomcdj71)
+# @author_contact: jamie.dobbs@mschf.dev, contact.tomc@yahoo.fr
 #
 # @license: BSD-3 Clause (Included in LICENSE)
-# Copyright (C) 2021-2022, Jamie Dobbs
+# Copyright (C) 2021-2024, Jamie Dobbs, Thomas Chauveau
 # All rights reserved.
 ################################################################################
 
