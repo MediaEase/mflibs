@@ -15,7 +15,7 @@
 
 ################################################################################
 # @description: extracts based on extension
-# @example: 
+# @example:
 #   mflibs::file::extract file.tar.gz
 # @arg $1: file to extract
 # @return_code: 0 success
@@ -33,15 +33,15 @@ mflibs::file::extract() {
     return 3
   fi
   case $1 in
-		*.tar | *.tar.xz | *.tar.zst) tar -xf "$1" && return 0;;
-    *.tar.bz2 | *.tbz2) tar -jxf "$1" && return 0;;
-    *.tar.gz | *.tgz)   tar -zxf "$1" && return 0;;
-	  *.bz2) bunzip2 "$1" && return 0;;
-	  *.gz) gunzip "$1" && return 0;;
-		*.gpg) gpg -d "$1" | tar -xf - && return 0;;
-		*.rar) 7z x "$1" && return 0;;
-    *.zip) unzip -q "$1" && return 0;;
-    *.7z) 7z x "$1" && return 0;;
+  *.tar | *.tar.xz | *.tar.zst) tar -xf "$1" && return 0 ;;
+  *.tar.bz2 | *.tbz2) tar -jxf "$1" && return 0 ;;
+  *.tar.gz | *.tgz) tar -zxf "$1" && return 0 ;;
+  *.bz2) bunzip2 "$1" && return 0 ;;
+  *.gz) gunzip "$1" && return 0 ;;
+  *.gpg) gpg -d "$1" | tar -xf - && return 0 ;;
+  *.rar) 7z x "$1" && return 0 ;;
+  *.zip) unzip -q "$1" && return 0 ;;
+  *.7z) 7z x "$1" && return 0 ;;
   esac
   [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && echo -ne "[$(tput setaf 1)1$(tput sgr0)]: unable to extract\n" >&2
   return 1
@@ -61,4 +61,35 @@ mflibs::file::load::yaml::key() {
   local value
   value=$(yq r "$file" "$key")
   echo "$value"
+}
+
+################################################################################
+# @description: chmods a file
+# @example:
+#   mflibs::file::chmod file 755
+# @arg $1: file to chmod
+# @arg $2: permissions
+# @return_code: 0 success
+# @return_code: 1 invalid amount of arguments
+# @return_code: 2 file does not exist
+################################################################################
+mflibs::file::chmod() {
+  if [[ $# -ne 2 ]]; then
+    [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && echo -ne "[$(tput setaf 1)1$(tput sgr0)]: ${FUNCNAME[0]} is missing arguments\n" >&2
+    return 1
+  fi
+  if [[ ! -f "$1" ]]; then
+    [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && echo -ne "[$(tput setaf 1)2$(tput sgr0)]: $1 does not exist\n" >&2
+    return 2
+  fi
+
+  # Validate permission format
+  if [[ "$2" =~ ^[0-7]{3,4}$ ]] || [[ "$2" =~ ^[ugoa]*[-+=]?[rwxXst]*$ ]]; then
+    chmod "$2" "$1"
+    sleep 2
+    return 0
+  else
+    [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && echo -ne "[$(tput setaf 1)3$(tput sgr0)]: Invalid permission format '$2'\n" >&2
+    return 3
+  fi
 }
