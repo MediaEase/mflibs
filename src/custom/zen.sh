@@ -21,7 +21,8 @@
 ################################################################################
 zen::environment::init() {
     [[ ${BASH_VERSINFO[0]} -lt 4 ]] && printf "exiting: mflibs requires bash version 4 or greater" && exit 1
-    declare mflibs_base_location; declare -g mflibs_lib_location mflibs_custom_location
+    declare mflibs_base_location
+    declare -g mflibs_lib_location mflibs_custom_location
     mflibs_base_location="$(dirname "$(realpath -s "${BASH_SOURCE[0]}")")"
     mflibs_base_location="${mflibs_base_location%/*}"
     mflibs_lib_location="${mflibs_base_location}/libs"
@@ -40,14 +41,14 @@ zen::import() {
     local loaded_libraries=()
     local failed_libraries=()
     [[ $* =~ "verbose" ]] && declare -xga MFLIBS_LOADED+=("verbose") && echo -ne "$(tput sgr0)[$(tput setaf 6)INFO$(tput sgr0)] - verbosity enabled\n"
-    
+
     for l in ${@//,/ }; do
         [[ $l == "verbose" ]] && continue
         local library_path=""
         if [[ -f ${mflibs_lib_location}/${l}.sh ]]; then
             library_path="${mflibs_lib_location}/${l}.sh"
-        elif [[ -f ${mediaease_base_location}/scripts/src/modules/${l}.sh ]]; then
-            library_path="${mediaease_base_location}/scripts/src/modules/${l}.sh"
+        elif [[ -f ${mediaease_base_location}/zen/src/modules/${l}.sh ]]; then
+            library_path="${mediaease_base_location}/zen/src/modules/${l}.sh"
         fi
 
         if [[ -n $library_path ]]; then
@@ -61,7 +62,7 @@ zen::import() {
         echo -ne "$(tput sgr0)[$(tput setaf 2)SUCCESS$(tput sgr0)] - loaded libraries: ${loaded_libraries[*]}\n"
     fi
     if [[ ${#failed_libraries[@]} -gt 0 ]]; then
-        echo -ne "$(tput sgr0)[$(tput setaf 3)WARN$(tput sgr0)] - libraries not loaded: ${failed_libraries[*]}\n" 
+        echo -ne "$(tput sgr0)[$(tput setaf 3)WARN$(tput sgr0)] - libraries not loaded: ${failed_libraries[*]}\n"
     fi
     if [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && [[ " ${loaded_libraries[*]} " =~ log ]]; then
         echo -ne "$(tput sgr0)[$(tput setaf 6)INFO$(tput sgr0)] - logging to ${MFLIBS_LOG_LOCATION}\n"
