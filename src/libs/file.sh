@@ -34,14 +34,15 @@ mflibs::file::extract() {
   fi
   case $1 in
   *.tar | *.tar.xz | *.tar.zst) tar -xf "$1" && return 0 ;;
-  *.tar.bz2 | *.tbz2) tar -jxf "$1" && return 0 ;;
-  *.tar.gz | *.tgz) tar -zxf "$1" && return 0 ;;
+  *.tar.bz2 | *.tbz2) tar -jxf "$1" --strip-components=1 && return 0 ;;
+  *.tar.gz | *.tgz) tar -zxf "$1" --strip-components=1 && return 0 ;;
   *.bz2) bunzip2 "$1" && return 0 ;;
   *.gz) gunzip "$1" && return 0 ;;
   *.gpg) gpg -d "$1" | tar -xf - && return 0 ;;
   *.rar) 7z x "$1" && return 0 ;;
   *.zip) unzip -q "$1" && return 0 ;;
   *.7z) 7z x "$1" && return 0 ;;
+  *.deb) dpkg -i "$1" | less && return 0 ;;
   esac
   [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && echo -ne "[$(tput setaf 1)1$(tput sgr0)]: unable to extract\n" >&2
   return 1
