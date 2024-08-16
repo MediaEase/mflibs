@@ -41,30 +41,31 @@ zen::import() {
     local loaded_libraries=()
     local failed_libraries=()
     [[ $* =~ "verbose" ]] && declare -xga MFLIBS_LOADED+=("verbose") && echo -ne "$(tput sgr0)[$(tput setaf 6)INFO$(tput sgr0)] - verbosity enabled\n"
+    [[ $* =~ "debug" ]] && declare -xga MFLIBS_LOADED+=("debug") && echo -ne "$(tput sgr0)[$(tput setaf 6)INFO$(tput sgr0)] - debug enabled\n"
 
-    for l in ${@//,/ }; do
-        [[ $l == "verbose" ]] && continue
+    for lib in ${@//,/ }; do
+        [[ $lib == "verbose" || $lib == "debug" ]] && continue
         local library_path=""
-        if [[ -f ${mflibs_lib_location}/${l}.sh ]]; then
-            library_path="${mflibs_lib_location}/${l}.sh"
-        elif [[ -f ${mediaease_base_location}/zen/src/modules/${l}.sh ]]; then
-            library_path="${mediaease_base_location}/zen/src/modules/${l}.sh"
+        if [[ -f ${mflibs_lib_location}/${lib}.sh ]]; then
+            library_path="${mflibs_lib_location}/${lib}.sh"
+        elif [[ -f ${mediaease_base_location}/zen/src/modules/${lib}.sh ]]; then
+            library_path="${mediaease_base_location}/zen/src/modules/${lib}.sh"
         fi
 
         if [[ -n $library_path ]]; then
             . "$library_path"
-            loaded_libraries+=("$l")
+            loaded_libraries+=("$lib")
         else
-            failed_libraries+=("$l")
+            failed_libraries+=("$lib")
         fi
     done
-    if [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && [[ ${#loaded_libraries[@]} -gt 0 ]]; then
+    if [[ " ${MFLIBS_LOADED[*]} " =~ verbose || " ${MFLIBS_LOADED[*]} " =~ debug ]] && [[ ${#loaded_libraries[@]} -gt 0 ]]; then
         echo -ne "$(tput sgr0)[$(tput setaf 2)SUCCESS$(tput sgr0)] - loaded libraries: ${loaded_libraries[*]}\n"
     fi
     if [[ ${#failed_libraries[@]} -gt 0 ]]; then
         echo -ne "$(tput sgr0)[$(tput setaf 3)WARN$(tput sgr0)] - libraries not loaded: ${failed_libraries[*]}\n"
     fi
-    if [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && [[ " ${loaded_libraries[*]} " =~ log ]]; then
+    if [[ " ${MFLIBS_LOADED[*]} " =~ verbose || " ${MFLIBS_LOADED[*]} " =~ debug ]] && [[ " ${loaded_libraries[*]} " =~ log ]]; then
         echo -ne "$(tput sgr0)[$(tput setaf 6)INFO$(tput sgr0)] - logging to ${MFLIBS_LOG_LOCATION}\n"
     fi
 }

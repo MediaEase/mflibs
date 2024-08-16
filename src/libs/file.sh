@@ -25,11 +25,11 @@
 ################################################################################
 mflibs::file::extract() {
   if [[ $# -ne 1 ]]; then
-    [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && echo -ne "[$(tput setaf 1)2$(tput sgr0)]: ${FUNCNAME[0]} is missing arguments\n" >&2
+    [[ " ${MFLIBS_LOADED[*]} " =~ verbose || " ${MFLIBS_LOADED[*]} " =~ debug ]] && echo -ne "[$(tput setaf 1)2$(tput sgr0)]: ${FUNCNAME[0]} is missing arguments\n" >&2
     return 2
   fi
   if [[ ! -f "$1" ]]; then
-    [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && echo -ne "[$(tput setaf 1)3$(tput sgr0)]: $1 does not exist" >&2
+    [[ " ${MFLIBS_LOADED[*]} " =~ verbose || " ${MFLIBS_LOADED[*]} " =~ debug ]] && echo -ne "[$(tput setaf 1)3$(tput sgr0)]: $1 does not exist" >&2
     return 3
   fi
   case $1 in
@@ -44,7 +44,7 @@ mflibs::file::extract() {
   *.7z) 7z x "$1" && return 0 ;;
   *.deb) dpkg -i "$1" | less && return 0 ;;
   esac
-  [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]] && echo -ne "[$(tput setaf 1)1$(tput sgr0)]: unable to extract\n" >&2
+  [[ " ${MFLIBS_LOADED[*]} " =~ verbose || " ${MFLIBS_LOADED[*]} " =~ debug ]] && echo -ne "[$(tput setaf 1)1$(tput sgr0)]: unable to extract\n" >&2
   return 1
 }
 

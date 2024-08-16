@@ -21,7 +21,8 @@
 ################################################################################
 mflibs::environment::init() {
     [[ ${BASH_VERSINFO[0]} -lt 4 ]] && printf "exiting: mflibs requires bash version 4 or greater" && exit 1
-    declare mflibs_base_location; declare -g mflibs_lib_location mflibs_custom_location
+    declare mflibs_base_location
+    declare -g mflibs_lib_location mflibs_custom_location
     mflibs_base_location="$(dirname "$(realpath -s "${BASH_SOURCE[0]}")")"
     mflibs_lib_location="${mflibs_base_location}/libs"
     mflibs_custom_location="${mflibs_base_location}/custom"
@@ -38,7 +39,7 @@ mflibs::import() {
     local loaded_libraries=()
     local failed_libraries=()
     [[ $* =~ "verbose" ]] && declare -xga MFLIBS_LOADED+=("verbose") && echo -ne "$(tput sgr0)[$(tput setaf 6)INFO$(tput sgr0)] - verbosity enabled\n"
-    
+
     for l in ${@//,/ }; do
         [[ $l == "verbose" ]] && continue
         local library_path=""
