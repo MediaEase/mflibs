@@ -49,6 +49,74 @@ mflibs::file::extract() {
 }
 
 ################################################################################
+# @description: Archives a file or directory based on the given extension.
+#               Creates the destination directory if it doesn't exist.
+#               Appends to the archive if it already exists.
+# @example:
+#   mflibs::file::inflate "myfile.txt" "backup.tar.gz" "/root/backups"
+#   mflibs::file::inflate "mydirectory" "backup.zip" "/root/backups"
+# @arg $1: file or directory to archive
+# @arg $2: name.extension for the output archive
+# @arg $3: output directory where the archive will be saved
+# @return_code: 0 success
+# @return_code: 1 unable to archive
+# @return_code: 2 invalid number of arguments
+# @return_code: 3 file or directory does not exist
+################################################################################
+mflibs::file::inflate() {
+  if [[ $# -ne 3 ]]; then
+    [[ " ${MFLIBS_LOADED[*]} " =~ verbose || " ${MFLIBS_LOADED[*]} " =~ debug ]] && echo -ne "[$(tput setaf 1)2$(tput sgr0)]: ${FUNCNAME[0]} has incorrect number of arguments\n" >&2
+    return 2
+  fi
+  local input_path="$1"
+  local archive_name="$2"
+  local output_dir="$3"
+  local output_path="$output_dir/$archive_name"
+  if [[ ! -e "$input_path" ]]; then
+    [[ " ${MFLIBS_LOADED[*]} " =~ verbose || " ${MFLIBS_LOADED[*]} " =~ debug ]] && echo -ne "[$(tput setaf 1)3$(tput sgr0)]: $input_path does not exist\n" >&2
+    return 3
+  fi
+  if [[ ! -d "$output_dir" ]]; then
+    if ! mkdir -p "$output_dir"; then
+      [[ " ${MFLIBS_LOADED[*]} " =~ verbose || " ${MFLIBS_LOADED[*]} " =~ debug ]] && echo -ne "[$(tput setaf 1)1$(tput sgr0)]: Unable to create directory $output_dir\n" >&2
+      return 1
+    fi
+  fi
+  if [[ -f "$output_path" ]]; then
+    case $output_path in
+    *.tar) if ! tar -rf "$output_path" -C "$(dirname "$input_path")" "$(basename "$input_path")"; then return 1; fi ;;
+    *.tar.xz | *.tar.zst | *.tar.bz2 | *.tbz2 | *.tar.gz | *.tgz)
+      if ! tar --append --file="$output_path" -C "$(dirname "$input_path")" "$(basename "$input_path")"; then return 1; fi
+      ;;
+    *.rar) if ! rar a "$output_path" "$input_path"; then return 1; fi ;;
+    *.zip) if ! zip -rqu "$output_path" "$input_path"; then return 1; fi ;;
+    *.7z) if ! 7z u "$output_path" "$input_path"; then return 1; fi ;;
+    *)
+      [[ " ${MFLIBS_LOADED[*]} " =~ verbose || " ${MFLIBS_LOADED[*]} " =~ debug ]] && echo -ne "[$(tput setaf 1)1$(tput sgr0)]: unable to append to archive\n" >&2
+      return 1
+      ;;
+    esac
+  else
+    case $output_path in
+    *.tar) if ! tar -cf "$output_path" -C "$(dirname "$input_path")" "$(basename "$input_path")"; then return 1; fi ;;
+    *.tar.xz) if ! tar -cJf "$output_path" -C "$(dirname "$input_path")" "$(basename "$input_path")"; then return 1; fi ;;
+    *.tar.zst) if ! tar --zstd -cf "$output_path" -C "$(dirname "$input_path")" "$(basename "$input_path")"; then return 1; fi ;;
+    *.tar.bz2 | *.tbz2) if ! tar -cjf "$output_path" -C "$(dirname "$input_path")" "$(basename "$input_path")"; then return 1; fi ;;
+    *.tar.gz | *.tgz) if ! tar -czf "$output_path" -C "$(dirname "$input_path")" "$(basename "$input_path")"; then return 1; fi ;;
+    *.rar) if ! rar a "$output_path" "$input_path"; then return 1; fi ;;
+    *.zip) if ! zip -rq "$output_path" "$input_path"; then return 1; fi ;;
+    *.7z) if ! 7z a "$output_path" "$input_path"; then return 1; fi ;;
+    *)
+      [[ " ${MFLIBS_LOADED[*]} " =~ verbose || " ${MFLIBS_LOADED[*]} " =~ debug ]] && echo -ne "[$(tput setaf 1)1$(tput sgr0)]: unable to create archive\n" >&2
+      return 1
+      ;;
+    esac
+  fi
+
+  return 0
+}
+
+################################################################################
 # @description: loads a yaml file and returns a value based on a key
 # @example:
 #   mflibs::file::load::yaml::key file.yaml key
