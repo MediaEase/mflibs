@@ -75,6 +75,32 @@ mflibs::file::copy() {
 }
 
 ################################################################################
+# @description: Moves a file or directory and handles errors with a custom message.
+# @example:
+#   mflibs::file::move "/path/to/source" "/path/to/destination"
+# @arg $1: source file or directory
+# @arg $2: destination file or directory
+# @return_code: 0 success
+# @return_code: 1 move failed
+# @return_code: 2 invalid amount of arguments
+# @return_code: 3 source file or directory does not exist
+################################################################################
+mflibs::file::move() {
+  if [[ $# -ne 2 ]]; then
+    [[ " ${MFLIBS_LOADED[*]} " =~ verbose || " ${MFLIBS_LOADED[*]} " =~ debug ]] && echo -ne "[$(tput setaf 1)2$(tput sgr0)]: ${FUNCNAME[0]} is missing arguments\n" >&2
+    return 2
+  fi
+  local source="$1"
+  local destination="$2"
+  if [[ ! -e "$source" ]]; then
+    [[ " ${MFLIBS_LOADED[*]} " =~ verbose || " ${MFLIBS_LOADED[*]} " =~ debug ]] && echo -ne "[$(tput setaf 1)3$(tput sgr0)]: $source does not exist\n" >&2
+    return 3
+  fi
+  mv "$source" "$destination" || echo -ne "[$(tput setaf 1)1$(tput sgr0)]: Unable to move $source to $destination\n" >&2
+  return 0
+}
+
+################################################################################
 # @description: Archives a file or directory based on the given extension.
 #               Creates the destination directory if it doesn't exist.
 #               Appends to the archive if it already exists.
