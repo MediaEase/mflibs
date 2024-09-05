@@ -89,7 +89,7 @@ mflibs::status::info() {
   declare message=${1:-"information not specified"}
   message=${message//$HOME/\~}
   if [[ " ${MFLIBS_LOADED[*]} " =~ verbose || " ${MFLIBS_LOADED[*]} " =~ debug ]]; then
-    echo -ne "$(tput sgr0)[$(tput setaf 6)INFO$(tput sgr0)] - $message\n"
+    echo -ne "$(tput sgr0)[$(tput setaf 4)INFO$(tput sgr0)] - $message\n"
   else
     echo -ne "$(tput setaf 6)$message\n"
   fi
