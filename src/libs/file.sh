@@ -66,11 +66,22 @@ mflibs::file::copy() {
   fi
   local source="$1"
   local destination="$2"
+  if [[ ! -d "$(dirname "$destination")" ]]; then
+    if ! mkdir -p "$(dirname "$destination")"; then
+      [[ " ${MFLIBS_LOADED[*]} " =~ verbose || " ${MFLIBS_LOADED[*]} " =~ debug ]] && echo -ne "[$(tput setaf 1)1$(tput sgr0)]: Unable to create directory $(dirname "$destination")\n" >&2
+      return 1
+    fi
+  fi
   if [[ ! -e "$source" ]]; then
     [[ " ${MFLIBS_LOADED[*]} " =~ verbose || " ${MFLIBS_LOADED[*]} " =~ debug ]] && echo -ne "[$(tput setaf 1)3$(tput sgr0)]: $source does not exist\n" >&2
     return 3
   fi
-  cp -pR "$source" "$destination" || echo -ne "[$(tput setaf 1)1$(tput sgr0)]: Unable to copy $source to $destination\n" >&2
+  if [[ -d "$source" ]]; then
+    cp -pR "$source"/* "$destination" || echo -ne "[$(tput setaf 1)1$(tput sgr0)]: Unable to copy $source to $destination\n" >&2
+  else
+    cp -p "$source" "$destination" || echo -ne "[$(tput setaf 1)1$(tput sgr0)]: Unable to copy $source to $destination\n" >&2
+  fi
+  [[ " ${MFLIBS_LOADED[*]} " =~ verbose || " ${MFLIBS_LOADED[*]} " =~ debug ]] && echo -ne "[$(tput setaf 2)0$(tput sgr0)]: Copied $source to $destination\n"
   return 0
 }
 
