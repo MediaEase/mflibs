@@ -81,7 +81,7 @@ mflibs::file::copy() {
   else
     cp -p "$source" "$destination" || echo -ne "[$(tput setaf 1)1$(tput sgr0)]: Unable to copy $source to $destination\n" >&2
   fi
-  [[ " ${MFLIBS_LOADED[*]} " =~ verbose || " ${MFLIBS_LOADED[*]} " =~ debug ]] && echo -ne "[$(tput setaf 2)0$(tput sgr0)]: Copied $source to $destination\n"
+  [[ " ${MFLIBS_LOADED[*]} " =~ debug ]] && echo -ne "[$(tput setaf 2)0$(tput sgr0)]: Copied $source to $destination\n"
   return 0
 }
 
