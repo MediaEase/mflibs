@@ -55,10 +55,10 @@ mflibs::shell::output() {
   if [[ ${mflibs_echo:-} -eq 1 ]]; then
     printf -- "%s${shell_newline}" "$@"
   else
-    printf -- "${shell_reset}${shell_color}${shell_icon}${shell_option}%s${shell_newline}${shell_reset}" "$@"
+    printf -- "${shell_reset}${shell_background_color}${shell_color}${shell_icon}${shell_option}%s${shell_newline}${shell_reset}" "$@"
     [[ " ${MFLIBS_LOADED[*]} " =~ log ]] && printf "${shell_icon}%s${shell_newline}" "$@" >> "${mflibs_log_location}"
   fi
-  unset shell_color shell_newline shell_option shell_icon
+  unset shell_color shell_background_color shell_newline shell_option shell_icon
 }
 
 mflibs::shell::text() {
@@ -369,6 +369,37 @@ mflibs::shell::text::white::standout::sl() {
   declare -g shell_color shell_option=standout shell_newline=0; shell_color=$(tput setaf 7)
   mflibs::shell::output "$@"
 }
+
+################################################################################
+# @description: background shell output functions
+# @example:
+#   mflibs::shell::background::yellow; mflibs::shell::text::white "hi"
+################################################################################
+mflibs::shell::background::black() {
+  declare -g shell_background_color shell_option=bold; shell_background_color=$(tput setab 0)
+}
+mflibs::shell::background::red() {
+  declare -g shell_background_color shell_option=bold; shell_background_color=$(tput setab 1)
+}
+mflibs::shell::background::green() {
+  declare -g shell_background_color shell_option=bold; shell_background_color=$(tput setab 2)
+}
+mflibs::shell::background::yellow() {
+  declare -g shell_background_color shell_option=bold; shell_background_color=$(tput setab 3)
+}
+mflibs::shell::background::blue() {
+  declare -g shell_background_color shell_option=bold; shell_background_color=$(tput setab 4)
+}
+mflibs::shell::background::magenta() {
+  declare -g shell_background_color shell_option=bold; shell_background_color=$(tput setab 5)
+}
+mflibs::shell::background::cyan() {
+  declare -g shell_background_color shell_option=bold; shell_background_color=$(tput setab 6)
+}
+mflibs::shell::background::white() {
+  declare -g shell_background_color shell_option=bold; shell_background_color=$(tput setab 7)
+}
+
 
 ################################################################################
 # @description: arrow shell functions
