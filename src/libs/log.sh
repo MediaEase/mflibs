@@ -40,24 +40,14 @@ mflibs::log::init() {
 # @arg 1: command to log
 # @example:
 #   mflibs::log "echo hi"
-################################################################################
 mflibs::log() {
   local command="$1"
   if [[ " ${MFLIBS_LOADED[*]} " =~ debug ]]; then
-    (
-      # Execute the command and log its output to both the console and the log file
-      eval "$command" |& tee -a "${mflibs_log_file}" 2>&1
-    )
+    eval "$command" |& tee -a "${mflibs_log_file}"
   elif [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]]; then
-    (
-      # Execute the command and log its output to the log file only
-      eval "$command" |& tee -a "${mflibs_log_file}" 2>&1
-    )
+    eval "$command" |& tee -a "${mflibs_log_file}"
   else
-    # Execute the command, log its output to the log file, and print only echo/printf to the console
-    {
-      eval "$command" 2>&1 | tee -a "${mflibs_log_file}" | awk '/^(printf|echo)/ { print; next } { print > "/dev/null" }'
-    }
+    eval "$command" 2>&1 | tee -a "${mflibs_log_file}" | awk '/^(printf|echo)/ { print; next } { print > "/dev/null" }'
   fi
 }
 
