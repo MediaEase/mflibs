@@ -207,3 +207,41 @@ mflibs::file::load::yaml::key() {
     yq eval "$key" "$file"
   fi
 }
+
+##################################################################################################
+# @description: Checks if a key exists in a YAML file.
+#               For configuration files, the function automatically adds
+#               the ".arguments" prefix, except for keys
+#               in the "paths" array, where the array is searched for the element
+#               that contains the key.
+#
+# @example:
+#   mflibs::file::yaml_key_exists config.yaml 'app_name'
+#   mflibs::file::yaml_key_exists config.yaml 'details.github'
+#   mflibs::file::yaml_key_exists config.yaml 'paths.[].data'
+#
+# @arg $1: Path to the YAML file
+# @arg $2: Key to check (without prefix for config files)
+# @return_code: 0 if the extracted value is neither "null" nor empty, 1 Otherwise
+################################################################################
+mflibs::file::yaml_key_exists() {
+  local file="$1"
+  local key="$2"
+  local value=""
+  
+  if [[ "$key" =~ ^paths\.\[\]\.(.+)$ ]]; then
+    local subkey="${BASH_REMATCH[1]}"
+    value=$(yq eval ".arguments.paths[] | select(has(\"${subkey}\")) | .${subkey}" "$file" 2>/dev/null)
+  else
+    if [[ "$key" != .arguments.* ]]; then
+      key=".arguments.$key"
+    fi
+    value=$(yq eval "$key" "$file" 2>/dev/null)
+  fi
+  
+  if [[ "$value" == "null" || -z "$value" ]]; then
+    return 1
+  else
+    return 0
+  fi
+}
