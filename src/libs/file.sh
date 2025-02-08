@@ -179,18 +179,31 @@ mflibs::file::inflate() {
   return 0
 }
 
-################################################################################
-# @description: loads a yaml file and returns a value based on a key
+########################################################################################################
+# @description: Loads the value associated with a key from a YAML file.
+#               If the file has an "arguments" node, the function automatically
+#               prefixes it, unless the key is part of an array,
+#               in which case the array is searched for the element containing the key.
+#
 # @example:
-#   mflibs::file::load::yaml::key file.yaml key
-# @arg $1: file to load
-# @arg $2: key to extract
-# @stdout: value of key
+# mflibs::file::load::yaml::key config.yaml 'app_name'
+# mflibs::file::load::yaml::key config.yaml 'details.github'
+# mflibs::file::load::yaml::key config.yaml 'paths.[].backup'
+#
+# @arg $1: Path to the YAML file
+# @arg $2: Key to extract (without ".arguments." prefix for config files)
+# @stdout: Extracted value
 ################################################################################
 mflibs::file::load::yaml::key() {
   local file="$1"
   local key="$2"
-  local value
-  value=$(yq r "$file" "$key")
-  echo "$value"
+  if [[ "$key" =~ ^paths\.\[\]\.(.+)$ ]]; then
+    local subkey="${BASH_REMATCH[1]}"
+    yq eval ".arguments.paths[] | select(has(\"${subkey}\")) | .${subkey}" "$file"
+  else
+    if [[ "$key" != .arguments.* ]]; then
+      key=".arguments.$key"
+    fi
+    yq eval "$key" "$file"
+  fi
 }
