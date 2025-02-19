@@ -209,48 +209,52 @@ mflibs::verify::alpha_dash() {
 #   2
 # @arg $1: version number to verify
 # @arg $2: version number to verify
-# @return_code: 0 equal
-# @return_code: 1 $1 -gt $2
-# @return_code: 2 $1 -lt $2
+# @return_code: 0 if $1 is greater than $2
+# @return_code: 1 if $1 is less than $2
+# @return_code: 2 if $1 is equal to $2
 # @return_code: 3 missing arguments
-# @return_code: 4 invalid format
+# @return_code: 4 invalid version number
 ################################################################################
 mflibs::verify::version() {
   if [[ $# -lt 2 ]]; then
-    [[ " ${MFLIBS_LOADED[*]} " =~ verbose || " ${MFLIBS_LOADED[*]} " =~ debug ]] && echo -ne "[$(tput setaf 1)3$(tput sgr0)]: ${FUNCNAME[0]} is missing arguments\n" >&2
+    [[ " ${MFLIBS_LOADED[*]} " =~ verbose || " ${MFLIBS_LOADED[*]} " =~ debug ]] && \
+      echo -ne "[$(tput setaf 1)2$(tput sgr0)]: ${FUNCNAME[0]} is missing arguments\n" >&2
     return 3
   fi
-  declare regex="^[.0-9]*$"
+  declare regex="^v?[0-9]+(?:\.[0-9]+)*(?:-(alpha[0-9]*|beta[0-9]*|rc[0-9]*))?$"
   if [[ ! $1 =~ $regex ]]; then
-    [[ " ${MFLIBS_LOADED[*]} " =~ verbose || " ${MFLIBS_LOADED[*]} " =~ debug ]] && echo -ne "[$(tput setaf 1)4$(tput sgr0)]: ${FUNCNAME[0]} $1 is in an invalid format\n" >&2
+    [[ " ${MFLIBS_LOADED[*]} " =~ verbose || " ${MFLIBS_LOADED[*]} " =~ debug ]] && \
+      echo -ne "[$(tput setaf 1)3$(tput sgr0)]: ${FUNCNAME[0]} '$1' is in an invalid format\n" >&2
     return 4
   fi
   if [[ ! $2 =~ $regex ]]; then
-    [[ " ${MFLIBS_LOADED[*]} " =~ verbose || " ${MFLIBS_LOADED[*]} " =~ debug ]] && echo -ne "[$(tput setaf 1)4$(tput sgr0)]: ${FUNCNAME[0]} $2 is in an invalid format\n" >&2
+    [[ " ${MFLIBS_LOADED[*]} " =~ verbose || " ${MFLIBS_LOADED[*]} " =~ debug ]] && \
+      echo -ne "[$(tput setaf 1)3$(tput sgr0)]: ${FUNCNAME[0]} '$2' is in an invalid format\n" >&2
     return 4
   fi
-  if [[ "$1" == "$2" ]]; then
-    [[ " ${MFLIBS_LOADED[*]} " =~ verbose || " ${MFLIBS_LOADED[*]} " =~ debug ]] && echo -ne "[$(tput setaf 2)0$(tput sgr0)]: $1 equals $2\n"
-    return 0
-  fi
+
   declare -a ver1 ver2
-  declare IFS=.
-  read -r -a ver1 <<<"${1}"
-  read -r -a ver2 <<<"${2}"
-  for ((i = ${#ver1[@]}; i < ${#ver2[@]}; i++)); do
+  IFS='.' read -r -a ver1 <<< "$1"
+  IFS='.' read -r -a ver2 <<< "$2"
+  local i
+  for (( i=${#ver1[@]}; i<${#ver2[@]}; i++ )); do
     ver1[i]=0
   done
-  for ((i = 0; i < ${#ver1[@]}; i++)); do
+  for (( i=0; i<${#ver1[@]}; i++ )); do
     [[ -z ${ver2[i]} ]] && ver2[i]=0
-    if ((10#${ver1[i]} > 10#${ver2[i]})); then
-      [[ " ${MFLIBS_LOADED[*]} " =~ verbose || " ${MFLIBS_LOADED[*]} " =~ debug ]] && echo -ne "[$(tput setaf 2)1$(tput sgr0)]: $1 is greater than $2\n"
+    if (( 10#${ver1[i]} > 10#${ver2[i]} )); then
+      [[ " ${MFLIBS_LOADED[*]} " =~ verbose || " ${MFLIBS_LOADED[*]} " =~ debug ]] && \
+        echo -ne "[$(tput setaf 2)0$(tput sgr0)]: $1 is greater than $2\n"
+      return 0
+    elif (( 10#${ver1[i]} < 10#${ver2[i]} )); then
+      [[ " ${MFLIBS_LOADED[*]} " =~ verbose || " ${MFLIBS_LOADED[*]} " =~ debug ]] && \
+        echo -ne "[$(tput setaf 2)1$(tput sgr0)]: $1 is less than $2\n"
       return 1
     fi
-    if ((10#${ver1[i]} < 10#${ver2[i]})); then
-      [[ " ${MFLIBS_LOADED[*]} " =~ verbose || " ${MFLIBS_LOADED[*]} " =~ debug ]] && echo -ne "[$(tput setaf 2)2$(tput sgr0)]: $1 is less than $2\n"
-      return 2
-    fi
   done
+  [[ " ${MFLIBS_LOADED[*]} " =~ verbose || " ${MFLIBS_LOADED[*]} " =~ debug ]] && \
+    echo -ne "[$(tput setaf 2)1$(tput sgr0)]: $1 is equal to $2\n"
+  return 2
 }
 
 ################################################################################
