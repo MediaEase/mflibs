@@ -245,3 +245,25 @@ mflibs::file::yaml_key_exists() {
     return 0
   fi
 }
+
+##################################################################################################
+# @description: Updates a key in a YAML file.
+#
+# @example:
+#   mflibs::file::update::yaml::key config.yaml 'app_name' 'new_value'
+#
+# @arg $1: Path to the YAML file
+# @arg $2: Key to update
+# @arg $3: New value
+# @return_code: 0 if the key was updated successfully, 1 Otherwise
+################################################################################
+mflibs::file::yaml::update_key() {
+    local file="$1"
+    local key="$2"
+    local value="$3"
+    if [[ ! -f "$file" ]]; then
+        mflibs::status::error "Fichier non trouvé : $file"
+        return 1
+    fi
+    yq eval -i "$key = \"$value\"" "$file"
+}
