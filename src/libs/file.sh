@@ -186,15 +186,15 @@ mflibs::file::inflate() {
 #               in which case the array is searched for the element containing the key.
 #
 # @example:
-# mflibs::file::load::yaml::key config.yaml 'app_name'
-# mflibs::file::load::yaml::key config.yaml 'details.github'
-# mflibs::file::load::yaml::key config.yaml 'paths.[].backup'
+# mflibs::file::yaml::key_load config.yaml 'app_name'
+# mflibs::file::yaml::key_load config.yaml 'details.github'
+# mflibs::file::yaml::key_load config.yaml 'paths.[].backup'
 #
 # @arg $1: Path to the YAML file
 # @arg $2: Key to extract (without ".arguments." prefix for config files)
 # @stdout: Extracted value
 ################################################################################
-mflibs::file::load::yaml::key() {
+mflibs::file::yaml::key_load() {
   local file="$1"
   local key="$2"
   if [[ "$key" =~ ^paths\.\[\]\.(.+)$ ]]; then
@@ -216,15 +216,15 @@ mflibs::file::load::yaml::key() {
 #               that contains the key.
 #
 # @example:
-#   mflibs::file::yaml_key_exists config.yaml 'app_name'
-#   mflibs::file::yaml_key_exists config.yaml 'details.github'
-#   mflibs::file::yaml_key_exists config.yaml 'paths.[].data'
+#   mflibs::file::yaml::key_exists config.yaml 'app_name'
+#   mflibs::file::yaml::key_exists config.yaml 'details.github'
+#   mflibs::file::yaml::key_exists config.yaml 'paths.[].data'
 #
 # @arg $1: Path to the YAML file
 # @arg $2: Key to check (without prefix for config files)
 # @return_code: 0 if the extracted value is neither "null" nor empty, 1 Otherwise
 ################################################################################
-mflibs::file::yaml_key_exists() {
+mflibs::file::yaml::key_exists() {
   local file="$1"
   local key="$2"
   local value=""
@@ -257,7 +257,7 @@ mflibs::file::yaml_key_exists() {
 # @arg $3: New value
 # @return_code: 0 if the key was updated successfully, 1 Otherwise
 ################################################################################
-mflibs::file::yaml::update_key() {
+mflibs::file::yaml::key_update() {
     local file="$1"
     local key="$2"
     local value="$3"
