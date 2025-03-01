@@ -23,14 +23,25 @@ mflibs::status::error() {
   declare message=${1:-"an unspecified error occurred"}
   declare mf_error=${2:-1}
   message=${message//$HOME/\~}
-  # if verbose is set, print the stack trace
   if [[ " ${MFLIBS_LOADED[*]} " =~ verbose || " ${MFLIBS_LOADED[*]} " =~ debug ]]; then
     echo -ne "[$(tput setaf 1)ERROR$(tput sgr0)][$mf_error] - $message\n" >&2
     echo -ne "[$(tput setaf 1)ERROR$(tput sgr0)][$mf_error] - stack trace:\n" >&2
+    echo -ne "[$(tput setaf 1)ERROR$(tput sgr0)][$mf_error] - $message\n" >>"${MFLIBS_LOG_LOCATION}"
+    echo -ne "[$(tput setaf 1)ERROR$(tput sgr0)][$mf_error] - stack trace:\n" >>"${MFLIBS_LOG_LOCATION}"
     local i=0
-    while caller $i; do ((i++)); done
+    while caller $i; do
+      caller $i >>"${MFLIBS_LOG_LOCATION}"
+      ((i++))
+    done
   else
     echo -ne "$(tput setaf 1)$message\n" >&2
+    echo -ne "[$(tput setaf 1)ERROR$(tput sgr0)][$mf_error] - $message\n" >>"${MFLIBS_LOG_LOCATION}"
+    echo -ne "[$(tput setaf 1)ERROR$(tput sgr0)][$mf_error] - stack trace:\n" >>"${MFLIBS_LOG_LOCATION}"
+    local i=0
+    while caller $i; do
+      caller $i >>"${MFLIBS_LOG_LOCATION}"
+      ((i++))
+    done
   fi
 }
 
@@ -56,8 +67,12 @@ mflibs::status::warn() {
   declare message=${1:-"an unspecified error occurred"}
   declare mf_error=${2:-1}
   message=${message//$HOME/\~}
+  local log_message
+  log_message="[$(tput setaf 3)WARN$(tput sgr0)][$mf_error] - $message"
+
   if [[ " ${MFLIBS_LOADED[*]} " =~ verbose || " ${MFLIBS_LOADED[*]} " =~ debug ]]; then
-    echo -ne "$(tput sgr0)[$(tput setaf 3)WARN$(tput sgr0)][$mf_error] - $message\n" >&2
+    echo -ne "$log_message\n"
+    echo -ne "$log_message\n" | tee -a "${MFLIBS_LOG_LOCATION}" >&2
   else
     echo -ne "$(tput setaf 3)$message\n" >&2
   fi
@@ -72,8 +87,12 @@ mflibs::status::warn() {
 mflibs::status::success() {
   declare message=${1:-"command completed successfully"}
   message=${message//$HOME/\~}
+  local log_message
+  log_message="[$(tput setaf 2)SUCCESS$(tput sgr0)] - $message"
+
   if [[ " ${MFLIBS_LOADED[*]} " =~ verbose || " ${MFLIBS_LOADED[*]} " =~ debug ]]; then
-    echo -ne "$(tput sgr0)[$(tput setaf 2)SUCCESS$(tput sgr0)] - $message\n"
+    echo -ne "$log_message\n"
+    echo -ne "$log_message\n" >> "${MFLIBS_LOG_LOCATION}"
   else
     echo -ne "$(tput setaf 2)$message\n"
   fi
@@ -88,8 +107,12 @@ mflibs::status::success() {
 mflibs::status::info() {
   declare message=${1:-"information not specified"}
   message=${message//$HOME/\~}
+  local log_message
+  log_message="[$(tput setaf 4)INFO$(tput sgr0)] - $message"
+
   if [[ " ${MFLIBS_LOADED[*]} " =~ verbose || " ${MFLIBS_LOADED[*]} " =~ debug ]]; then
-    echo -ne "$(tput sgr0)[$(tput setaf 4)INFO$(tput sgr0)] - $message\n"
+    echo -ne "$log_message\n"
+    echo -ne "$log_message\n" >> "${MFLIBS_LOG_LOCATION}"
   else
     echo -ne "$(tput setaf 6)$message\n"
   fi
@@ -104,8 +127,12 @@ mflibs::status::info() {
 mflibs::status::header() {
   declare message=${1:-"header not specified"}
   message=${message//$HOME/\~}
+  local log_message
+  log_message="[$(tput setaf 7)HEADER$(tput sgr0)] - $message"
+
   if [[ " ${MFLIBS_LOADED[*]} " =~ verbose || " ${MFLIBS_LOADED[*]} " =~ debug ]]; then
-    echo -ne "$(tput sgr0)[$(tput setaf 7)HEADER$(tput sgr0)] - $message\n"
+    echo -ne "$log_message\n"
+    echo -ne "$log_message\n" >> "${MFLIBS_LOG_LOCATION}"
   else
     echo -ne "$(tput setaf 7)$message\n"
   fi
