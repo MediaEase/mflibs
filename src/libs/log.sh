@@ -22,6 +22,7 @@ mflibs::log::init() {
   declare mflibs_log_base
   mflibs_log_base="/opt/MediaEase/logs"
   [[ -z "${mflibs_log_file}" ]] && declare -g mflibs_log_file="${mflibs_log_base}/${BASH_SOURCE[-1]##*/}"
+  trap 'LAST_COMMAND="$BASH_COMMAND"; mflibs::log::handle_command "$LAST_COMMAND"' DEBUG
   if [[ ! -d "$(dirname "${mflibs_log_file}")" ]]; then
     [[ " ${MFLIBS_LOADED[*]} " =~ verbose || " ${MFLIBS_LOADED[*]} " =~ debug ]] && echo -ne "$(tput sgr0)[$(tput setaf 6)INFO$(tput sgr0)] - creating log location: $(dirname "${mflibs_log_file}")\n"
     mkdir -p "$(dirname "${mflibs_log_file}")"
@@ -42,12 +43,75 @@ mflibs::log::init() {
 #   mflibs::log "echo hi"
 mflibs::log() {
   local command="$1"
+
   if [[ " ${MFLIBS_LOADED[*]} " =~ debug ]]; then
-    eval "$command" |& tee -a "${mflibs_log_file}"
+    # Debug Mode: Log command before execution
+    echo "$(date "+%Y-%m-%d %H:%M:%S") [DEBUG] Executing: $command" >> "${mflibs_log_file}"
+    { eval "$command" 2>&1; } |& tee -a "${mflibs_log_file}"
+  
   elif [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]]; then
-    eval "$command" |& tee -a "${mflibs_log_file}"
+    # Verbose Mode: Only print output, no logging
+    eval "$command" 2>&1
+
   else
-    eval "$command" 2>&1 | tee -a "${mflibs_log_file}" | awk '/^(printf|echo)/ { print; next } { print > "/dev/null" }'
+    # Normal Mode: Log output but don’t print to terminal
+    eval "$command" >>"${mflibs_log_file}" 2>&1
+  fi
+}
+
+################################################################################
+# @description: handles command logging
+# @arg 1: command to log
+# @example:
+#   mflibs::log::handle_command "echo hi"
+mflibs::log::handle_command() {
+  local command="$1"
+  local timestamp
+  timestamp="$(date "+%Y-%m-%d %H:%M:%S")"
+  echo "$timestamp [CMD] $command" >> "${mflibs_log_file}"
+  case "$command" in
+    *" > /dev/null"*|*" 2> /dev/null"*|*" &>/dev/null"*|*" </dev/null"*) return ;;
+    cat*"/proc/"*|cat*"/sys/"*|cat*"/dev/"*|echo*"/proc/"*|echo*"/sys/"*) return ;;
+    echo*"="*|echo*"/tmp/"*|echo*"/run/"*) return ;;
+    history*|trap*|unset*|alias*|unalias*|type*|set*) return ;;
+    declare*|export*|local*) 
+      if [[ "$command" =~ password|vault|key ]]; then
+        return
+      fi ;;
+  esac
+  if [[ "$command" =~ ^wget ]]; then
+    local wget_cmd="$command"
+    if [[ " ${MFLIBS_LOADED[*]} " =~ debug ]]; then
+      wget_cmd=$(echo "$wget_cmd" | sed -E "s/ -q//g")
+      wget_cmd+=" -v"
+      echo "$timestamp [DEBUG] $wget_cmd" >> "${mflibs_log_file}"
+    elif [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]]; then
+      wget_cmd=$(echo "$wget_cmd" | sed -E "s/ -q//g")
+      wget_cmd+=" -nv"
+      echo "$timestamp [VERBOSE] $wget_cmd" >> "${mflibs_log_file}"
+    else
+      wget_cmd=$(echo "$wget_cmd" | sed -E "s/ -q//g")
+      wget_cmd+=" -q"
+      echo "$timestamp [CMD] $wget_cmd" >> "${mflibs_log_file}"
+    fi
+    return
+  fi
+  if [[ "$command" =~ ^apt || "$command" =~ ^apt-get ]]; then
+    local apt_cmd="$command"
+    if [[ " ${MFLIBS_LOADED[*]} " =~ debug ]]; then
+      apt_cmd=$(echo "$apt_cmd" | sed -E "s/ -qq//g")
+      apt_cmd+=" -V"
+      echo "$timestamp [DEBUG] $apt_cmd" >> "${mflibs_log_file}"
+    elif [[ " ${MFLIBS_LOADED[*]} " =~ verbose ]]; then
+      apt_cmd=$(echo "$apt_cmd" | sed -E "s/ -qq//g")
+      apt_cmd+=" -q"
+      echo "$timestamp [VERBOSE] $apt_cmd" >> "${mflibs_log_file}"
+    else
+      apt_cmd=$(echo "$apt_cmd" | sed -E "s/ -qq//g")
+      apt_cmd+=" -qq"
+      echo "$timestamp [CMD] $apt_cmd" >> "${mflibs_log_file}"
+    fi
+    return
   fi
 }
 
