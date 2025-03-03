@@ -27,13 +27,17 @@ mflibs::log::init() {
     [[ " ${MFLIBS_LOADED[*]} " =~ verbose || " ${MFLIBS_LOADED[*]} " =~ debug ]] && echo -ne "$(tput sgr0)[$(tput setaf 6)INFO$(tput sgr0)] - creating log location: $(dirname "${mflibs_log_file}")\n"
     mkdir -p "$(dirname "${mflibs_log_file}")"
   fi
-  if [[ -f "${mflibs_log_file}" && $(wc -c "${mflibs_log_file}" | awk '{print $1}') -gt 10000 ]]; then
-    [[ " ${MFLIBS_LOADED[*]} " =~ verbose || " ${MFLIBS_LOADED[*]} " =~ debug ]] && echo -ne "$(tput sgr0)[$(tput setaf 6)INFO$(tput sgr0)] - rotating ${mflibs_log_file} to ${mflibs_log_file}.1\n"
-    mv -f "${mflibs_log_file}" "${mflibs_log_file}.1"
+  if [[ -f "${mflibs_log_file}" && $(wc -c "${mflibs_log_file}" | awk '{print $1}') -gt 25000 ]]; then
+    timestamp=$(date "+%Y-%m-%d-%H-%M-%S")
+    [[ " ${MFLIBS_LOADED[*]} " =~ verbose || " ${MFLIBS_LOADED[*]} " =~ debug ]] && echo -ne "$(tput sgr0)[$(tput setaf 6)INFO$(tput sgr0)] - rotating ${mflibs_log_file} to ${mflibs_log_file}-$timestamp\n"
+    mv -f "${mflibs_log_file}" "${mflibs_log_file}-$timestamp"
   fi
   touch "${mflibs_log_file}" || { echo -ne "[$(tput setaf 1)ERROR$(tput sgr0)][1] - unable to touch ${mflibs_log_file}\n" && exit 1; }
   printf "\n### %s ###\n" "$(date "+%Y-%m-%d %R:%S")" >>"${mflibs_log_file}"
   export MFLIBS_LOG_LOCATION="${mflibs_log_file}"
+  if [[ $(du -s "${mflibs_log_base}" | awk '{print $1}') -gt 100000 ]]; then
+    find "${mflibs_log_base}" -type f -name "$(basename "${mflibs_log_file}")-*" -mtime +2 -exec rm -f {} \;
+  fi
 }
 
 ################################################################################
