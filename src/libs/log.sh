@@ -72,17 +72,17 @@ mflibs::log::handle_command() {
   local command="$1"
   local timestamp
   timestamp="$(date "+%Y-%m-%d %H:%M:%S")"
-  echo "$timestamp [CMD] $command" >> "${mflibs_log_file}"
   case "$command" in
     *" > /dev/null"*|*" 2> /dev/null"*|*" &>/dev/null"*|*" </dev/null"*) return ;;
     cat*"/proc/"*|cat*"/sys/"*|cat*"/dev/"*|echo*"/proc/"*|echo*"/sys/"*) return ;;
     echo*"="*|echo*"/tmp/"*|echo*"/run/"*) return ;;
     history*|trap*|unset*|alias*|unalias*|type*|set*) return ;;
-    declare*|export*|local*) 
-      if [[ "$command" =~ password|vault|key ]]; then
-        return
-      fi ;;
+    declare*|export*|local*) return ;;
   esac
+  if [[ "$command" =~ (password|vault|key) ]]; then
+    return
+  fi
+  echo "$timestamp [CMD] $command" >> "${mflibs_log_file}"
   if [[ "$command" =~ ^wget ]]; then
     local wget_cmd="$command"
     if [[ " ${MFLIBS_LOADED[*]} " =~ debug ]]; then
