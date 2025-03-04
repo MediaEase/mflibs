@@ -20,7 +20,7 @@
 ################################################################################
 mflibs::log::init() {
   declare mflibs_log_base
-  mflibs_log_base="/opt/MediaEase/logs"
+  mflibs_log_base="/var/log/mediaease"
   [[ -z "${mflibs_log_file}" ]] && declare -g mflibs_log_file="${mflibs_log_base}/${BASH_SOURCE[-1]##*/}"
   trap 'LAST_COMMAND="$BASH_COMMAND"; mflibs::log::handle_command "$LAST_COMMAND"' DEBUG
   if [[ ! -d "$(dirname "${mflibs_log_file}")" ]]; then
