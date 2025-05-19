@@ -79,7 +79,7 @@ mflibs::log::handle_command() {
     history*|trap*|unset*|alias*|unalias*|type*|set*) return ;;
     declare*|export*|local*) return ;;
   esac
-  if [[ "$command" =~ (password|vault|key) ]]; then
+  if [[ "$command" =~ (password|vault|key|user) ]]; then
     return
   fi
   echo "$timestamp [CMD] $command" >> "${mflibs_log_file}"
